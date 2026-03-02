@@ -150,10 +150,10 @@ async def play(ctx):
                 pass
         case 9:
             target_channel = None
-            if ctx.author and ctx.author.voice and ctx.author.voice.channel:
-                target_channel = ctx.author.voice.channel
-            elif ctx.guild and ctx.guild.me and ctx.guild.me.voice and ctx.guild.me.voice.channel:
+            if ctx.guild and ctx.guild.me and ctx.guild.me.voice and ctx.guild.me.voice.channel:
                 target_channel = ctx.guild.me.voice.channel
+            elif ctx.author and ctx.author.voice and ctx.author.voice.channel:
+                target_channel = ctx.author.voice.channel
 
             if not target_channel:
                 return
@@ -167,6 +167,7 @@ async def play(ctx):
                     await member.move_to(None)
                 except Exception:
                     pass
+
 
 @bot.command()
 async def wisdom(ctx):
