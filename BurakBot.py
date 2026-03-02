@@ -149,11 +149,7 @@ async def play(ctx):
             except Exception:
                 pass
         case 9:
-            target_channel = None
-            if ctx.guild and ctx.guild.me and ctx.guild.me.voice and ctx.guild.me.voice.channel:
-                target_channel = ctx.guild.me.voice.channel
-            elif ctx.author and ctx.author.voice and ctx.author.voice.channel:
-                target_channel = ctx.author.voice.channel
+            target_channel = ctx.guild.me.voice.channel
 
             if not target_channel:
                 return
