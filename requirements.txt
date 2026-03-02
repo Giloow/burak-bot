@@ -1,0 +1,5 @@
+python-dotenv
+discord.py
+aioconsole
+pynacl
+imageio-ffmpeg
