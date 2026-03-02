@@ -4,6 +4,10 @@ from aioconsole import ainput
 import os
 import discord
 from discord.ext import commands
+from dotenv import load_dotenv
+from imageio_ffmpeg import get_ffmpeg_exe
+
+load_dotenv()
 
 intents = discord.Intents.default()
 intents.message_content = True  # Required to read message content
@@ -89,10 +93,26 @@ async def speak(ctx):
     if ctx.voice_client:
         voice_client = ctx.voice_client
         if not voice_client.is_playing():
-            audio = discord.FFmpegPCMAudio(r"C:\Users\USER\Music\cough.mp3")
-            await voice_client.play(audio)
+            ffmpeg_exe = get_ffmpeg_exe()
+            audio_path = os.path.join(os.path.dirname(__file__), 'public', 'burakBreathing.mp3')
+            audio = discord.FFmpegPCMAudio(audio_path, executable=ffmpeg_exe)
+
+            voice_client.play(audio)
         else:
             await ctx.send("I am already speaking you foul degenerate")
+    else:
+        await ctx.send("Burak not in voice channel")
+
+
+@bot.command()
+async def shut_up(ctx):
+    if ctx.voice_client:
+        voice_client = ctx.voice_client
+        if voice_client.is_playing():
+            voice_client.stop()
+            await ctx.send("Sorry 😢")
+        else:
+            await ctx.send("You have ball cancer")
     else:
         await ctx.send("Burak not in voice channel")
 
@@ -122,6 +142,32 @@ async def play(ctx):
     await ctx.send(f'number chosen is {chosen}')
     await ctx.send(responses[chosen])
 
+    match chosen:
+        case 0:
+            try:
+                await ctx.voice_client.disconnect()
+            except Exception:
+                pass
+        case 9:
+            target_channel = None
+            if ctx.author and ctx.author.voice and ctx.author.voice.channel:
+                target_channel = ctx.author.voice.channel
+            elif ctx.guild and ctx.guild.me and ctx.guild.me.voice and ctx.guild.me.voice.channel:
+                target_channel = ctx.guild.me.voice.channel
+
+            if not target_channel:
+                return
+
+            perms = ctx.guild.me.guild_permissions
+            if not perms.move_members:
+                return
+
+            for member in list(target_channel.members):
+                try:
+                    await member.move_to(None)
+                except Exception:
+                    pass
+
 @bot.command()
 async def wisdom(ctx):
     for i in range(20):
@@ -140,4 +186,8 @@ responses = {
     9: '<Self Destruct>'
 }
 
-bot.run(os.getenv('TOKEN'))
+token = os.getenv('TOKEN')
+if not token:
+    raise SystemExit("ERROR: Discord TOKEN not found. Add TOKEN=... to a .env file or set the environment variable.")
+
+bot.run(token)
