@@ -16,9 +16,21 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="$", intents=intents)
 
-token = os.getenv('TOKEN')
-if not token:
-    raise SystemExit("ERROR: Discord TOKEN not found. Add TOKEN=... to a .env file or set the environment variable.")
+async def kick_all(ctx):
+    target_channel = ctx.guild.me.voice.channel
+
+    if not target_channel:
+        return
+
+    perms = ctx.guild.me.guild_permissions
+    if not perms.move_members:
+        return
+
+    for member in list(target_channel.members):
+        try:
+            await member.move_to(None)
+        except Exception:
+            pass
 
 @bot.event
 async def on_ready():
@@ -152,24 +164,12 @@ async def play(ctx):
             except Exception:
                 pass
         case 9:
-            target_channel = None
-            if ctx.author and ctx.author.voice and ctx.author.voice.channel:
-                target_channel = ctx.author.voice.channel
-            elif ctx.guild and ctx.guild.me and ctx.guild.me.voice and ctx.guild.me.voice.channel:
-                target_channel = ctx.guild.me.voice.channel
-
-            if not target_channel:
-                return
-
-            perms = ctx.guild.me.guild_permissions
-            if not perms.move_members:
-                return
-
-            for member in list(target_channel.members):
-                try:
-                    await member.move_to(None)
-                except Exception:
-                    pass
+            await kick_all(ctx)
+            
+@bot.command()
+async def allahu_akbar(ctx):
+    await ctx.send("Allahu Akbar!🧨")
+    await kick_all(ctx)
 
 @bot.command()
 async def wisdom(ctx):
